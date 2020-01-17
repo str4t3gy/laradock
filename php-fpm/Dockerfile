@@ -14,7 +14,7 @@
 
 ARG LARADOCK_PHP_VERSION
 
-FROM laradock/php-fpm:2.7-${LARADOCK_PHP_VERSION}
+FROM laradock/php-fpm:2.6.2-${LARADOCK_PHP_VERSION}
 
 LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 
@@ -568,6 +568,96 @@ RUN if [ ${INSTALL_INTL} = true ]; then \
     docker-php-ext-configure intl && \
     docker-php-ext-install intl \
 ;fi
+
+
+###########################################################################
+# BZ2:
+###########################################################################
+
+ARG INSTALL_BZ2=false
+
+RUN if [ ${INSTALL_BZ2} = true ]; then \
+    # Install BZ2 and requirements
+    apt-get install -y libbz2-dev && \
+    docker-php-ext-install bz2 \
+;fi
+
+
+###########################################################################
+# MCRYPT:
+###########################################################################
+
+ARG INSTALL_MCRYPT=false
+
+RUN if [ ${INSTALL_MCRYPT} = true ]; then \
+    # Install MCRYPT and requirements
+    apt-get install -y libmcrypt-dev && \
+    pecl install mcrypt-1.0.1 && \
+    docker-php-ext-enable mcrypt \
+;fi
+
+
+###########################################################################
+# SHMOP:
+###########################################################################
+
+ARG INSTALL_SHMOP=false
+
+RUN if [ ${INSTALL_SHMOP} = true ]; then \
+    # Install SHMOP and requirements
+    docker-php-ext-install shmop \
+;fi 
+
+###########################################################################
+# SYSVMSG:
+###########################################################################
+
+ARG INSTALL_SYSVMSG=false
+
+RUN if [ ${INSTALL_SYSVMSG} = true ]; then \
+    # Install SYSVMSG and requirements
+    docker-php-ext-install sysvmsg \
+;fi
+
+###########################################################################
+# SYSVSEM:
+###########################################################################
+
+ARG INSTALL_SYSVSEM=false
+
+RUN if [ ${INSTALL_SYSVSEM} = true ]; then \
+    # Install SYSVSEM and requirements
+    docker-php-ext-install sysvsem \
+;fi
+
+###########################################################################
+# SYSVSHM:
+###########################################################################
+
+ARG INSTALL_SYSVSHM=false
+
+RUN if [ ${INSTALL_SYSVSHM} = true ]; then \
+    # Install SYSVSHM and requirements
+    docker-php-ext-install sysvshm \
+;fi
+
+###########################################################################
+# WDDX:
+###########################################################################
+
+ARG INSTALL_WDDX=false
+
+RUN if [ ${INSTALL_WDDX} = true ]; then \
+    # Install WDDX and requirements
+    docker-php-ext-install wddx \
+;fi
+
+
+
+
+
+
+
 
 ###########################################################################
 # GHOSTSCRIPT:
