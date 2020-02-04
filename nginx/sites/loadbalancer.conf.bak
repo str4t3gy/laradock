@@ -1,0 +1,54 @@
+upstream backend {
+   server 192.168.1.88; #niflheim BACKENDCMS
+}
+
+upstream frontend {
+   ip_hash;
+   server 192.168.1.93 max_fails=3 fail_timeout=15s; #Saga     FRONTEND
+   server 192.168.1.97 max_fails=3 fail_timeout=15s; #Frigg    FRONTEND
+}
+
+server {
+    listen 80; 
+    listen 443 ssl;
+    ssl_certificate /etc/nginx/ssl/ssl-cert-snakeoil.pem;
+    ssl_certificate_key /etc/nginx/ssl/ssl-cert-snakeoil.key;
+
+    server_name prod.itcityonline.com;
+
+    location / {
+                 proxy_pass http://frontend;
+                 proxy_set_header Host $host;                          
+                 proxy_set_header X-Real-IP $remote_addr;                        
+                 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;      
+               }
+
+    location ~ /storage(.*)$ {
+                 proxy_pass http://backend;
+                 proxy_set_header Host $host;                          
+                 proxy_set_header X-Real-IP $remote_addr;                        
+                 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+              }
+               
+    error_log /var/log/nginx/frontend_error.log;
+    access_log /var/log/nginx/frontend_access.log;
+}
+
+
+server {
+    listen 80; 
+    listen 443 ssl;
+    ssl_certificate /etc/nginx/ssl/ssl-cert-snakeoil.pem;
+    ssl_certificate_key /etc/nginx/ssl/ssl-cert-snakeoil.key;
+
+    server_name prod-admin.itcityonline.com;
+
+    location / {
+                 proxy_pass http://backend;
+                 proxy_set_header Host $host;                          
+                 proxy_set_header X-Real-IP $remote_addr;                        
+                 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;      
+               }
+    error_log /var/log/nginx/backend_error.log;
+    access_log /var/log/nginx/backend_access.log;
+}
